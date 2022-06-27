@@ -9,7 +9,7 @@ namespace Persistence
         {
         }
 
-        public DbSet<Budget> Budget { get; set; }
+        public DbSet<Budget> Budgets { get; set; }
         public DbSet<Category> Category { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
         public DbSet<Account> Accounts { get; set; }

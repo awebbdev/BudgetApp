@@ -10,7 +10,7 @@ namespace Persistence
     {
         public static async Task SeedData(DataContext context)
         {
-            if (context.Budget.Any()) return;
+            if (context.Budgets.Any()) return;
 
             var budget = new List<Budget>
             {
@@ -82,7 +82,7 @@ namespace Persistence
                 }
             };
             
-            await context.Budget.AddRangeAsync(budget);
+            await context.Budgets.AddRangeAsync(budget);
             await context.SaveChangesAsync();
         }
     }
