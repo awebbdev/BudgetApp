@@ -7,6 +7,7 @@ import BudgetDashboard from "../../features/budgets/dashboard/BudgetDashboard";
 
 function App() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [selectedBudget, setSelectedBudget] = useState<Budget | undefined>(undefined);
 
   useEffect(() => {
     axios.get<Budget[]>("http://localhost:5000/api/Budget").then((resp) => {
@@ -14,11 +15,23 @@ function App() {
     });
   }, []);
 
+  function handleSelectBudget(id: string) {
+    setSelectedBudget(budgets.find(b => b.id === id));
+  }
+
+  function handleCancelSelectBudget() {
+    setSelectedBudget(undefined);
+  }
   return (
     <div>
       <NavBar />
       <Container className="dashboardContainer">
-        <BudgetDashboard budgets={budgets} />
+        <BudgetDashboard 
+          budgets={budgets}
+          selectedBudget={selectedBudget}
+          selectBudget={handleSelectBudget}
+          cancelSelectBudget={handleCancelSelectBudget}
+        />
       </Container>
     </div>
   );

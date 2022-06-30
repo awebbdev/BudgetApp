@@ -17,6 +17,10 @@ namespace Persistence
                 new Budget
                 {
                     Name = "Starter Budget",
+                    Description = "The budget to learn how to budget",
+                    DateCreated = DateTime.Now,
+                    DateModified = DateTime.Now,
+                    Owner = "Starter User",
                     Categories = new List<Category>{
                         new Category{
                             Name = "Income",

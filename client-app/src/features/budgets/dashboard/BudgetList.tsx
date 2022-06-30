@@ -4,9 +4,10 @@ import { Budget } from '../../../app/models/budget';
 
 interface Props {
     budgets: Budget[];
+    selectBudget: (id: string) => void;
 }
 
-export default function BudgetList({budgets}: Props) {
+export default function BudgetList({budgets, selectBudget}: Props) {
     return (
         <Segment>
             <Item.Group divided>
@@ -14,10 +15,13 @@ export default function BudgetList({budgets}: Props) {
                     <Item key={budget.id}>
                         <Item.Content>
                             <Item.Header as='a'>{budget.name}</Item.Header>
-                            <Item.Meta></Item.Meta>
-                            <Item.Description></Item.Description>
+                            <Item.Meta>{budget.owner}</Item.Meta>
+                            <Item.Description>
+                                <div>{budget.description}</div>
+                                <div>Date Created: {budget.dateCreated}</div>
+                            </Item.Description>
                             <Item.Extra>
-                                <Button floated='right' content='View' color='blue' />
+                                <Button onClick={() => selectBudget(budget.id)} floated='right' content='View' color='blue' />
                                 <Label basic content='Default' />
                             </Item.Extra>
                         </Item.Content>
