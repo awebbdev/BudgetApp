@@ -1,7 +1,13 @@
 import React from 'react'
 import { Button, Form, Segment } from 'semantic-ui-react'
+import { Budget } from '../../../app/models/budget';
 
-export default function BudgetForm() {
+interface Props {
+    budget: Budget | undefined;
+    closeForm: () => void;
+}
+
+export default function BudgetForm({ budget, closeForm } : Props) {
     return (
         <Segment clearing>
             <Form>
@@ -9,7 +15,7 @@ export default function BudgetForm() {
                 <Form.TextArea placeholder='Description' />
                 <Form.Input placeholder='Owner' />
                 <Button floated='right' positive type='submit' content='Submit' />
-                <Button floated='right' type='button' content='Cancel' />
+                <Button onClick={closeForm} floated='right' type='button' content='Cancel' />
             </Form>
         </Segment>
     )

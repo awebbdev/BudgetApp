@@ -5,9 +5,10 @@ import { Budget } from '../../../app/models/budget'
 interface Props {
     budget: Budget;
     cancelSelectBudget: () => void;
+    openForm: (id: string) => void;
 }
 
-export default function BudgetDetails({ budget, cancelSelectBudget }: Props) {
+export default function BudgetDetails({ budget, cancelSelectBudget, openForm }: Props) {
     return (
         <Card fluid>
             <Image src={`/assets/categoryImages/music.jpg`} />
@@ -22,7 +23,7 @@ export default function BudgetDetails({ budget, cancelSelectBudget }: Props) {
             </Card.Content>
             <Card.Content extra>
                 <Button.Group widths='2'>
-                    <Button basic color='blue' content='Edit' />
+                    <Button onClick={() => openForm(budget.id)} basic color='blue' content='Edit' />
                     <Button onClick={cancelSelectBudget} basic color='grey' content='Cancel' />
                 </Button.Group>
             </Card.Content>

@@ -10,13 +10,19 @@ interface Props {
     selectedBudget: Budget | undefined;
     selectBudget: (id: string) => void;
     cancelSelectBudget: () => void;
+    editMode: boolean;
+    openForm: (id: string) => void;
+    closeForm: () => void;
 }
 
 export default function BudgetDashboard({
     budgets,
     selectedBudget,
     selectBudget,
-    cancelSelectBudget
+    cancelSelectBudget,
+    editMode,
+    openForm,
+    closeForm
 }: Props) {
     return (
         <Grid>
@@ -24,9 +30,14 @@ export default function BudgetDashboard({
                 <BudgetList budgets={budgets} selectBudget={selectBudget} />
             </Grid.Column>
             <Grid.Column width='6'>
-                { selectedBudget &&
-                <BudgetDetails budget={selectedBudget} cancelSelectBudget={cancelSelectBudget} />}
-                <BudgetForm />
+                { selectedBudget && !editMode &&
+                <BudgetDetails 
+                    budget={selectedBudget} 
+                    cancelSelectBudget={cancelSelectBudget}
+                    openForm={openForm}
+                />}
+                {editMode &&
+                <BudgetForm closeForm={closeForm} budget={selectedBudget} />}
             </Grid.Column>
         </Grid>
     )

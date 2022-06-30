@@ -8,6 +8,7 @@ import BudgetDashboard from "../../features/budgets/dashboard/BudgetDashboard";
 function App() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [selectedBudget, setSelectedBudget] = useState<Budget | undefined>(undefined);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     axios.get<Budget[]>("http://localhost:5000/api/Budget").then((resp) => {
@@ -22,15 +23,28 @@ function App() {
   function handleCancelSelectBudget() {
     setSelectedBudget(undefined);
   }
+
+  function handleFormOpen(id?: string) {
+    id ? handleSelectBudget(id) : handleCancelSelectBudget();
+    setEditMode(true);
+  }
+
+  function handleFormClose() {
+    setEditMode(false);
+  }
+
   return (
     <div>
-      <NavBar />
+      <NavBar openForm={handleFormOpen} />
       <Container className="dashboardContainer">
         <BudgetDashboard 
           budgets={budgets}
           selectedBudget={selectedBudget}
           selectBudget={handleSelectBudget}
           cancelSelectBudget={handleCancelSelectBudget}
+          editMode={editMode}
+          openForm={handleFormOpen}
+          closeForm={handleFormClose}
         />
       </Container>
     </div>
