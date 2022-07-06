@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Container, List } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 import { Budget } from "../models/budget";
 import NavBar from "./NavBar";
 import BudgetDashboard from "../../features/budgets/dashboard/BudgetDashboard";
+import {v4 as uuid} from 'uuid';
 
 function App() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -33,6 +34,16 @@ function App() {
     setEditMode(false);
   }
 
+  function handleCreateOrEditBudget(budget: Budget) {
+    budget.id ? setBudgets([...budgets.filter(b => b.id !== budget.id), budget]) : setBudgets([...budgets, {...budget, id: uuid()}]);
+    setEditMode(false);
+    setSelectedBudget(budget);
+  }
+
+  function handleDeleteBudget(id: string) {
+    setBudgets([...budgets.filter(b => b.id !== id)]);
+  }
+
   return (
     <div>
       <NavBar openForm={handleFormOpen} />
@@ -45,6 +56,8 @@ function App() {
           editMode={editMode}
           openForm={handleFormOpen}
           closeForm={handleFormClose}
+          createOrEdit={handleCreateOrEditBudget}
+          deleteBudget={handleDeleteBudget}
         />
       </Container>
     </div>

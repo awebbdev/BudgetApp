@@ -5,9 +5,10 @@ import { Budget } from '../../../app/models/budget';
 interface Props {
     budgets: Budget[];
     selectBudget: (id: string) => void;
+    deleteBudget: (id: string) => void;
 }
 
-export default function BudgetList({budgets, selectBudget}: Props) {
+export default function BudgetList({budgets, selectBudget, deleteBudget}: Props) {
     return (
         <Segment>
             <Item.Group divided>
@@ -22,6 +23,7 @@ export default function BudgetList({budgets, selectBudget}: Props) {
                             </Item.Description>
                             <Item.Extra>
                                 <Button onClick={() => selectBudget(budget.id)} floated='right' content='View' color='blue' />
+                                <Button onClick={() => deleteBudget(budget.id)} floated='right' content='Delete' color='red' />
                                 <Label basic content='Default' />
                             </Item.Extra>
                         </Item.Content>

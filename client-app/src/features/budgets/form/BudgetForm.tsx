@@ -1,19 +1,43 @@
-import React from 'react'
+import React, { ChangeEvent, useState } from 'react'
 import { Button, Form, Segment } from 'semantic-ui-react'
 import { Budget } from '../../../app/models/budget';
 
 interface Props {
     budget: Budget | undefined;
     closeForm: () => void;
+    createOrEdit: (budget: Budget) => void;
 }
 
-export default function BudgetForm({ budget, closeForm } : Props) {
+export default function BudgetForm({ budget: selectedBudget, closeForm, createOrEdit } : Props) {
+
+    const initialState : Budget = selectedBudget ?? {
+        id: '',
+        name: '',
+        description: '',
+        dateCreated: new Date().toLocaleString(),
+        dateModified: new Date().toLocaleString(),
+        owner: '',
+        categories: [],
+        accounts: []
+    };
+
+    const [budget, setBudget] = useState(initialState);
+
+    function handleSubmit() {
+        createOrEdit(budget);
+    }
+
+    function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        const {name, value} = event.target;
+        setBudget({...budget, [name]: value});
+    }
+
     return (
         <Segment clearing>
-            <Form>
-                <Form.Input placeholder='Name' />
-                <Form.TextArea placeholder='Description' />
-                <Form.Input placeholder='Owner' />
+            <Form onSubmit={handleSubmit} autoComplete='off'>
+                <Form.Input placeholder='Name' value={budget.name} name='name' onChange={handleInputChange} />
+                <Form.TextArea placeholder='Description' value={budget.description} name='description' onChange={handleInputChange} />
+                <Form.Input placeholder='Owner' value={budget.owner} name='owner' onChange={handleInputChange} />
                 <Button floated='right' positive type='submit' content='Submit' />
                 <Button onClick={closeForm} floated='right' type='button' content='Cancel' />
             </Form>

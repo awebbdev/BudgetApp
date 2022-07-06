@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, List } from 'semantic-ui-react'
+import { Grid } from 'semantic-ui-react'
 import { Budget } from '../../../app/models/budget'
 import BudgetDetails from '../details/BudgetDetails'
 import BudgetForm from '../form/BudgetForm'
@@ -13,6 +13,8 @@ interface Props {
     editMode: boolean;
     openForm: (id: string) => void;
     closeForm: () => void;
+    createOrEdit: (budget: Budget) => void;
+    deleteBudget: (id: string) => void;
 }
 
 export default function BudgetDashboard({
@@ -22,12 +24,14 @@ export default function BudgetDashboard({
     cancelSelectBudget,
     editMode,
     openForm,
-    closeForm
+    closeForm,
+    createOrEdit,
+    deleteBudget
 }: Props) {
     return (
         <Grid>
             <Grid.Column width='10'>
-                <BudgetList budgets={budgets} selectBudget={selectBudget} />
+                <BudgetList budgets={budgets} selectBudget={selectBudget} deleteBudget={deleteBudget} />
             </Grid.Column>
             <Grid.Column width='6'>
                 { selectedBudget && !editMode &&
@@ -37,7 +41,7 @@ export default function BudgetDashboard({
                     openForm={openForm}
                 />}
                 {editMode &&
-                <BudgetForm closeForm={closeForm} budget={selectedBudget} />}
+                <BudgetForm closeForm={closeForm} budget={selectedBudget} createOrEdit={createOrEdit} />}
             </Grid.Column>
         </Grid>
     )
