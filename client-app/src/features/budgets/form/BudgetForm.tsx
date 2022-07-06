@@ -6,16 +6,17 @@ interface Props {
     budget: Budget | undefined;
     closeForm: () => void;
     createOrEdit: (budget: Budget) => void;
+    submitting: boolean
 }
 
-export default function BudgetForm({ budget: selectedBudget, closeForm, createOrEdit } : Props) {
+export default function BudgetForm({ budget: selectedBudget, closeForm, createOrEdit, submitting } : Props) {
 
     const initialState : Budget = selectedBudget ?? {
         id: '',
         name: '',
         description: '',
-        dateCreated: new Date().toLocaleString(),
-        dateModified: new Date().toLocaleString(),
+        dateCreated: new Date(),
+        dateModified: new Date(),
         owner: '',
         categories: [],
         accounts: []
@@ -38,7 +39,7 @@ export default function BudgetForm({ budget: selectedBudget, closeForm, createOr
                 <Form.Input placeholder='Name' value={budget.name} name='name' onChange={handleInputChange} />
                 <Form.TextArea placeholder='Description' value={budget.description} name='description' onChange={handleInputChange} />
                 <Form.Input placeholder='Owner' value={budget.owner} name='owner' onChange={handleInputChange} />
-                <Button floated='right' positive type='submit' content='Submit' />
+                <Button floated='right' positive type='submit' content='Submit' loading={submitting} />
                 <Button onClick={closeForm} floated='right' type='button' content='Cancel' />
             </Form>
         </Segment>

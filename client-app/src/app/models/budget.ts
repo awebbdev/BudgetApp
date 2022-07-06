@@ -2,8 +2,8 @@ export interface Budget {
     id: string;
     name: string;
     description: string;
-    dateCreated: string;
-    dateModified: string;
+    dateCreated: Date;
+    dateModified: Date;
     owner: string;
     categories: any[];
     accounts: any[];

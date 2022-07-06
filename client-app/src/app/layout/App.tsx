@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { Container } from "semantic-ui-react";
 import { Budget } from "../models/budget";
 import NavBar from "./NavBar";
 import BudgetDashboard from "../../features/budgets/dashboard/BudgetDashboard";
 import {v4 as uuid} from 'uuid';
+import agent from "../api/agent";
+import LoadingComponent from "./LoadingComponents";
 
 function App() {
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [selectedBudget, setSelectedBudget] = useState<Budget | undefined>(undefined);
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);  
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    axios.get<Budget[]>("http://localhost:5000/api/Budget").then((resp) => {
-      setBudgets(resp.data);
+    agent.Budgets.list().then(resp => {
+      setBudgets(resp);      
+      setLoading(false);
     });
   }, []);
 
@@ -35,14 +39,34 @@ function App() {
   }
 
   function handleCreateOrEditBudget(budget: Budget) {
-    budget.id ? setBudgets([...budgets.filter(b => b.id !== budget.id), budget]) : setBudgets([...budgets, {...budget, id: uuid()}]);
-    setEditMode(false);
-    setSelectedBudget(budget);
+    setSubmitting(true);
+    if(budget.id) {
+      agent.Budgets.update(budget).then(() => {
+        setBudgets([...budgets.filter(b => b.id !== budget.id), budget]);
+        setSelectedBudget(budget);
+        setEditMode(false);
+        setSubmitting(false);
+      })
+    } else {
+      budget.id = uuid();
+      agent.Budgets.create(budget).then(() => {
+        setBudgets([...budgets, budget]);
+        setSelectedBudget(budget);
+        setEditMode(false);
+        setSubmitting(false);
+      })
+    }   
   }
 
   function handleDeleteBudget(id: string) {
-    setBudgets([...budgets.filter(b => b.id !== id)]);
+    setSubmitting(true);
+    agent.Budgets.delete(id).then(() => {
+      setBudgets([...budgets.filter(b => b.id !== id)]);
+      setSubmitting(false);
+    })
   }
+
+  if (loading) return <LoadingComponent content='Loading App' />
 
   return (
     <div>
@@ -58,6 +82,7 @@ function App() {
           closeForm={handleFormClose}
           createOrEdit={handleCreateOrEditBudget}
           deleteBudget={handleDeleteBudget}
+          submitting={submitting}
         />
       </Container>
     </div>

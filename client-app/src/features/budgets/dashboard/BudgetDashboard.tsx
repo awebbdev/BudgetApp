@@ -15,6 +15,7 @@ interface Props {
     closeForm: () => void;
     createOrEdit: (budget: Budget) => void;
     deleteBudget: (id: string) => void;
+    submitting: boolean;
 }
 
 export default function BudgetDashboard({
@@ -26,12 +27,17 @@ export default function BudgetDashboard({
     openForm,
     closeForm,
     createOrEdit,
-    deleteBudget
+    deleteBudget,
+    submitting
 }: Props) {
     return (
         <Grid>
             <Grid.Column width='10'>
-                <BudgetList budgets={budgets} selectBudget={selectBudget} deleteBudget={deleteBudget} />
+                <BudgetList 
+                    budgets={budgets} 
+                    selectBudget={selectBudget} 
+                    deleteBudget={deleteBudget} 
+                    submitting={submitting} />
             </Grid.Column>
             <Grid.Column width='6'>
                 { selectedBudget && !editMode &&
@@ -41,7 +47,7 @@ export default function BudgetDashboard({
                     openForm={openForm}
                 />}
                 {editMode &&
-                <BudgetForm closeForm={closeForm} budget={selectedBudget} createOrEdit={createOrEdit} />}
+                <BudgetForm closeForm={closeForm} budget={selectedBudget} createOrEdit={createOrEdit} submitting={submitting} />}
             </Grid.Column>
         </Grid>
     )
