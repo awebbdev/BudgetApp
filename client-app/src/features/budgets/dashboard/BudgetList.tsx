@@ -1,15 +1,12 @@
+import { observer } from 'mobx-react-lite';
 import React, { SyntheticEvent, useState } from 'react'
 import { Button, Item, Label, Segment } from 'semantic-ui-react';
-import { Budget } from '../../../app/models/budget';
+import { useStore } from '../../../app/stores/store';
 
-interface Props {
-    budgets: Budget[];
-    selectBudget: (id: string) => void;
-    deleteBudget: (id: string) => void;
-    submitting: boolean;
-}
+export default observer(function BudgetList() {
 
-export default function BudgetList({budgets, selectBudget, deleteBudget, submitting}: Props) {
+    const {budgetStore} = useStore();
+    const{deleteBudget, budgetsByCreatedDate, loading} = budgetStore;
     
     const [target, setTarget] = useState('');
 
@@ -20,7 +17,7 @@ export default function BudgetList({budgets, selectBudget, deleteBudget, submitt
     return (
         <Segment>
             <Item.Group divided>
-                {budgets.map(budget => (
+                {budgetsByCreatedDate.map(budget => (
                     <Item key={budget.id}>
                         <Item.Content>
                             <Item.Header as='a'>{budget.name}</Item.Header>
@@ -29,13 +26,13 @@ export default function BudgetList({budgets, selectBudget, deleteBudget, submitt
                                 <div>{budget.description}</div>
                             </Item.Description>
                             <Item.Extra>
-                                <Button onClick={() => selectBudget(budget.id)} floated='right' content='View' color='blue' />                                <Button
+                                <Button onClick={() => budgetStore.selectBudget(budget.id)} floated='right' content='View' color='blue' />                                <Button
                                 name={budget.id}
                                     onClick={(e) => handleBudgetDelete(e, budget.id)} 
                                     floated='right' 
                                     content='Delete' 
                                     color='red' 
-                                    loading={submitting && target === budget.id} 
+                                    loading={loading && target === budget.id} 
                                 />
                                 <Label basic content='Default' />
                             </Item.Extra>
@@ -45,4 +42,4 @@ export default function BudgetList({budgets, selectBudget, deleteBudget, submitt
             </Item.Group>
         </Segment>
     )
-}
+});
