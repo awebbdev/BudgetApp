@@ -1,15 +1,12 @@
+import { observer } from 'mobx-react-lite';
 import React, { ChangeEvent, useState } from 'react'
 import { Button, Form, Segment } from 'semantic-ui-react'
 import { Budget } from '../../../app/models/budget';
+import { useStore } from '../../../app/stores/store';
 
-interface Props {
-    budget: Budget | undefined;
-    closeForm: () => void;
-    createOrEdit: (budget: Budget) => void;
-    submitting: boolean
-}
-
-export default function BudgetForm({ budget: selectedBudget, closeForm, createOrEdit, submitting } : Props) {
+export default observer(function BudgetForm() {
+    const {budgetStore} = useStore();
+    const{selectedBudget, closeForm, createBudget, updateBudget, loading} = budgetStore;
 
     const initialState : Budget = selectedBudget ?? {
         id: '',
@@ -25,7 +22,7 @@ export default function BudgetForm({ budget: selectedBudget, closeForm, createOr
     const [budget, setBudget] = useState(initialState);
 
     function handleSubmit() {
-        createOrEdit(budget);
+        budget.id ? updateBudget(budget) : createBudget(budget);
     }
 
     function handleInputChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -39,9 +36,9 @@ export default function BudgetForm({ budget: selectedBudget, closeForm, createOr
                 <Form.Input placeholder='Name' value={budget.name} name='name' onChange={handleInputChange} />
                 <Form.TextArea placeholder='Description' value={budget.description} name='description' onChange={handleInputChange} />
                 <Form.Input placeholder='Owner' value={budget.owner} name='owner' onChange={handleInputChange} />
-                <Button floated='right' positive type='submit' content='Submit' loading={submitting} />
+                <Button floated='right' positive type='submit' content='Submit' loading={loading} />
                 <Button onClick={closeForm} floated='right' type='button' content='Cancel' />
             </Form>
         </Segment>
     )
-};
+});
