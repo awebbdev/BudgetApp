@@ -1,27 +1,34 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Container } from "semantic-ui-react";
 import NavBar from "./NavBar";
 import BudgetDashboard from "../../features/budgets/dashboard/BudgetDashboard";
-import LoadingComponent from "./LoadingComponents";
-import { useStore } from '../stores/store';
 import { observer } from 'mobx-react-lite'
+import { Route, useLocation } from "react-router-dom";
+import BudgetForm from "../../features/budgets/form/BudgetForm";
+import HomePage from "../../features/home/homepage";
+import BudgetDetails from "../../features/budgets/details/BudgetDetails";
 
 function App() {
-  const {budgetStore} = useStore();
 
-  useEffect(() => {
-    budgetStore.loadBudgets();
-  }, [budgetStore])
-
-  if (budgetStore.loadingInitial) return <LoadingComponent content='Loading App' />
+  const location = useLocation();
 
   return (
-    <div>
-      <NavBar />
-      <Container className="dashboardContainer">
-        <BudgetDashboard />
-      </Container>
-    </div>
+    <>
+      <Route exact path='/' component={HomePage} />
+      <Route
+        path={'/(.+)'}
+        render={() => (
+          <>
+            <NavBar />
+            <Container className="dashboardContainer">
+                      <Route exact path='/budgets' component={BudgetDashboard} />
+                      <Route path='/budgets/:id' component={BudgetDetails} />
+                      <Route key={location.key} path={['/createBudget', '/manage/:id']} component={BudgetForm} />
+            </Container>
+          </>
+        )}
+      />
+    </>
   );
 }
 
