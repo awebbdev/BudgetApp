@@ -1,19 +1,18 @@
 import React from 'react'
+import { NavLink } from 'react-router-dom';
 import { Button, Container, Menu } from 'semantic-ui-react'
-import { useStore } from '../stores/store';
 
 export default function NavBar() {
-    const {budgetStore} = useStore();
     return (
         <Menu inverted fixed='top'>
             <Container>
-                <Menu.Item header>
+                <Menu.Item as={NavLink} to='/' exact header>
                     <img className='headerLogo' src={process.env.PUBLIC_URL + "/assets/logo.png"} alt="logo" />
                     Big Budget App
                 </Menu.Item>
-                <Menu.Item name='Budgets' />
+                <Menu.Item as={NavLink} to='/budgets' name='Budgets' />
                 <Menu.Item>
-                    <Button onClick={() => budgetStore.openForm()} positive content='Create Budget' />
+                    <Button as={NavLink} to='/createBudget' positive content='Create Budget' />
                 </Menu.Item>
             </Container>
         </Menu>

@@ -1,7 +1,6 @@
 import { makeAutoObservable, runInAction} from "mobx";
 import agent from "../api/agent";
 import { Budget } from "../models/budget";
-import { v4 as uuid } from 'uuid';
 
 export default class BudgetStore {
     budgetRegistry = new Map<string, Budget>();
@@ -24,7 +23,7 @@ export default class BudgetStore {
         try {
             const budgets = await agent.Budgets.list();
             budgets.forEach(budget => {
-                this.budgetRegistry.set(budget.id, budget);
+                this.setBudget(budget);
             });
             this.setLoadingInitial(false);
         }
@@ -34,30 +33,42 @@ export default class BudgetStore {
         }
     }
 
+    loadBudget = async (id:string) => {
+        let budget = this.getBudget(id);
+        if(budget) {
+            this.selectedBudget = budget;
+            return budget;
+        } else {
+            this.setLoadingInitial(true);
+            try {
+                budget = await agent.Budgets.details(id);
+                this.setBudget(budget);
+                runInAction(() => {
+                    this.selectedBudget = budget;
+                });
+                this.setLoadingInitial(false);
+                return budget;
+            } catch (error) {
+                this.setLoadingInitial(false);
+                console.log(error);
+            }
+        }
+    }
+
+    private setBudget(budget: Budget) {
+        this.budgetRegistry.set(budget.id, budget);
+    }
+
+    private getBudget = (id: string) => {
+        return this.budgetRegistry.get(id);
+    }
+
     setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
     }
 
-    selectBudget = (id: string) => {
-        this.selectedBudget = this.budgetRegistry.get(id);
-    }
-
-    cancelSelectedBudget = () => {
-        this.selectedBudget = undefined;
-    }
-
-    openForm = (id?: string) => {
-        id ? this.selectBudget(id) : this.cancelSelectedBudget();
-        this.editMode = true;
-    }
-
-    closeForm = () => {
-        this.editMode = false;
-    }
-
     createBudget = async (budget: Budget) => {
         this.loading = true;
-        budget.id = uuid();
         try{
             await agent.Budgets.create(budget);
             runInAction(() => {
@@ -98,7 +109,6 @@ export default class BudgetStore {
             await agent.Budgets.delete(id);
             runInAction(() => {
                 this.budgetRegistry.delete(id);
-                if(this.selectedBudget?.id === id ) this.cancelSelectedBudget();
                 this.loading = false;
             })
         } catch (error) {
